@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Finanzmanager 💸</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-light: #f8f9fa;
+            --text-light: #2c3e50;
+            --background-dark: #121212;
+            --card-dark: #1e1e1e;
+            --text-dark: #ffffff;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: var(--background-light);
+            color: var(--text-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: var(--transition);
+            padding-bottom: 30px;
+        }
+
+        .dark-mode {
+            background-color: var(--background-dark);
+            color: var(--text-dark);
+        }
+
+        .dark-mode .card,
+        .dark-mode .modal-content,
+        .dark-mode .list-group-item {
+            background-color: var(--card-dark);
+            color: var(--text-dark);
+            border-color: #333;
+        }
+
+        .app-header {
+            padding: 20px 0;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            margin-bottom: 30px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .section-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .dark-mode .section-card {
+            background-color: var(--card-dark);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .section-title i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .list-group-item {
+            border-radius: 8px !important;
+            margin-bottom: 8px;
+            transition: var(--transition);
+            border: 1px solid #eee;
+        }
+
+        .list-group-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+            border-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-light {
+            border-color: #ddd;
+            color: var(--text-light);
+        }
+
+        .dark-mode .btn-outline-light {
+            border-color: #333;
+            color: var(--text-dark);
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 10px 15px;
+            border: 1px solid #eee;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
+            border-color: var(--primary-color);
+        }
+
+        .modal-content {
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .mode-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .account-balance {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .positive {
+            color: var(--secondary-color);
+        }
+
+        .negative {
+            color: #e74c3c;
+        }
+
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+            margin-top: 5px;
+            background-color: #eee;
+        }
+
+        .dark-mode .progress {
+            background-color: #333;
+        }
+
+        .dashboard-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .dark-mode .summary-card {
+            background-color: var(--card-dark);
+        }
+
+        .summary-card i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .summary-card .amount {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .transaction-category {
+            background-color: rgba(52, 152, 219, 0.1);
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--primary-color);
+        }
+
+        .dark-mode .transaction-category {
+            background-color: rgba(52, 152, 219, 0.2);
+        }
+
+        canvas {
+            margin-top: 15px;
+            border-radius: var(--border-radius);
+            background-color: white;
+            padding: 15px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .dark-mode canvas {
+            background-color: var(--card-dark);
+        }
+    </style>
+</head>
+<body>
+<div class="app-header">
+    <h1><i class="fas fa-wallet"></i> Mein Finanzmanager</h1>
+    <p class="mb-0">Behalte deine Finanzen im Überblick</p>
+</div>
+
+<div class="container">
+    <!-- Dashboard-Zusammenfassung -->
+    <div class="dashboard-summary">
+        <div class="summary-card">
+            <i class="fas fa-coins"></i>
+            <div>Gesamtvermögen</div>
+            <div class="amount" id="totalBalance">0,00 €</div>
+        </div>
+        <div class="summary-card">
+            <i class="fas fa-arrow-up"></i>
+            <div>Einnahmen (30 Tage)</div>
+            <div class="amount positive" id="monthlyIncome">0,00 €</div>
+        </div>
+        <div class="summary-card">
+            <i class="fas fa-arrow-down"></i>
+            <div>Ausgaben (30 Tage)</div>
+            <div class="amount negative" id="monthlyExpenses">0,00 €</div>
+        </div>
+    </div>
+
+    <!-- Diagramm -->
+    <div class="section-card">
+        <div class="section-title">
+            <i class="fas fa-chart-line"></i>
+            <h4>Finanzübersicht</h4>
+        </div>
+        <canvas id="financeChart" height="250"></canvas>
+    </div>
+
+    <!-- Konten Section -->
+    <div class="section-card" id="accountsSection">
+        <div class="section-title">
+            <i class="fas fa-university"></i>
+            <h4>Meine Konten</h4>
+        </div>
+        <div id="accountsList" class="list-group mb-3"></div>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAccountModal">
+            <i class="fas fa-plus"></i> Neues Konto
+        </button>
+    </div>
+
+    <!-- Transaktionen Section -->
+    <div class="section-card" id="transactionsSection">
+        <div class="section-title">
+            <i class="fas fa-exchange-alt"></i>
+            <h4>Letzte Transaktionen</h4>
+        </div>
+        <div id="transactionsList" class="list-group mb-3"></div>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+            <i class="fas fa-plus"></i> Neue Transaktion
+        </button>
+    </div>
+
+    <!-- Ziele Section -->
+    <div class="section-card" id="goalsSection">
+        <div class="section-title">
+            <i class="fas fa-bullseye"></i>
+            <h4>Finanzielle Ziele</h4>
+        </div>
+        <div id="goalsList" class="list-group mb-3"></div>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addGoalModal">
+            <i class="fas fa-plus"></i> Neues Ziel
+        </button>
+    </div>
+</div>
+
+<!-- Dark Mode Toggle -->
+<button id="darkModeToggle" class="btn btn-primary mode-toggle">
+    <i class="fas fa-moon"></i>
+</button>
+
+<!-- Modale für Konto -->
+<div class="modal fade" id="addAccountModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="accountForm">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-university"></i> Neues Konto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="accountName" class="form-label">Kontoname</label>
+                        <input type="text" id="accountName" name="name" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="accountBalance" class="form-label">Startguthaben (€)</label>
+                        <input type="number" id="accountBalance" name="balance" class="form-control" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                    <button type="submit" class="btn btn-success">Speichern</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modale für Transaktion -->
+<div class="modal fade" id="addTransactionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="transactionForm">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-exchange-alt"></i> Neue Transaktion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="transactionAmount" class="form-label">Betrag (€)</label>
+                        <input type="number" id="transactionAmount" name="amount" class="form-control" required />
+                        <small class="form-text text-muted">Positive Werte für Einnahmen, negative für Ausgaben</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="transactionAccount" class="form-label">Konto</label>
+                        <select id="transactionAccount" name="account" class="form-select" required>
+                            <option value="" disabled selected>Konto auswählen</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="transactionDate" class="form-label">Datum</label>
+                        <input type="date" id="transactionDate" name="date" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="transactionCategory" class="form-label">Kategorie</label>
+                        <input type="text" id="transactionCategory" name="category" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="transactionDescription" class="form-label">Beschreibung</label>
+                        <textarea id="transactionDescription" name="description" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                    <button type="submit" class="btn btn-success">Speichern</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modale für Ziel -->
+<div class="modal fade" id="addGoalModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="goalForm">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-bullseye"></i> Neues Ziel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="goalTitle" class="form-label">Ziel-Titel</label>
+                        <input type="text" id="goalTitle" name="title" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="goalTargetAmount" class="form-label">Zielbetrag (€)</label>
+                        <input type="number" id="goalTargetAmount" name="targetAmount" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="goalCurrentAmount" class="form-label">Aktueller Betrag (€)</label>
+                        <input type="number" id="goalCurrentAmount" name="currentAmount" class="form-control" value="0" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="goalDate" class="form-label">Zieldatum</label>
+                        <input type="date" id="goalDate" name="targetDate" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                    <button type="submit" class="btn btn-success">Speichern</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- App-Skripte -->
+<script>
+    // Datenstruktur
+    let financeData = {
+        accounts: [],
+        transactions: [],
+        goals: []
+    };
+
+    // DOM-Elemente
+    const accountsList = document.getElementById('accountsList');
+    const transactionsList = document.getElementById('transactionsList');
+    const goalsList = document.getElementById('goalsList');
+    const accountForm = document.getElementById('accountForm');
+    const transactionForm = document.getElementById('transactionForm');
+    const goalForm = document.getElementById('goalForm');
+    const transactionAccountSelect = document.getElementById('transactionAccount');
+    const totalBalanceElement = document.getElementById('totalBalance');
+    const monthlyIncomeElement = document.getElementById('monthlyIncome');
+    const monthlyExpensesElement = document.getElementById('monthlyExpenses');
+
+    // Dark Mode Toggle
+    const darkModeToggle = document.getElementById('darkModeToggle');
+
+    // Prüfen ob dark-mode im localStorage gespeichert ist
+    if (localStorage.getItem('dark-mode') === 'enabled') {
+        document.body.classList.add('dark-mode');
+        darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    }
+
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+
+        // Dark Mode speichern
+        if (document.body.classList.contains('dark-mode')) {
+            localStorage.setItem('dark-mode', 'enabled');
+            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        } else {
+            localStorage.setItem('dark-mode', 'disabled');
+            darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        }
+    });
+
+    // Initialisieren
+    function init() {
+        loadData();
+        renderAccounts();
+        renderTransactions();
+        renderGoals();
+        updateDashboardSummary();
+        initChart();
+
+        // Datum auf heute setzen
+        document.getElementById('transactionDate').valueAsDate = new Date();
+
+        // Veranstaltungslistener für Formulare
+        if (accountForm) {
+            accountForm.addEventListener('submit', handleAccountSubmit);
+        }
+
+        if (transactionForm) {
+            transactionForm.addEventListener('submit', handleTransactionSubmit);
+        }
+
+        if (goalForm) {
+            goalForm.addEventListener('submit', handleGoalSubmit);
+        }
+    }
+
+    // Daten aus Local Storage laden
+    function loadData() {
+        const savedData = localStorage.getItem('financeData');
+        if (savedData) {
+            financeData = JSON.parse(savedData);
+        }
+    }
+
+    // Daten in Local Storage speichern
+    function saveData() {
+        localStorage.setItem('financeData', JSON.stringify(financeData));
+    }
+
+    // Konten rendern
+    function renderAccounts() {
+        if (!accountsList) return;
+
+        accountsList.innerHTML = '';
+
+        if (financeData.accounts.length === 0) {
+            accountsList.innerHTML = '<div class="text-center text-muted py-3">Keine Konten vorhanden. Erstelle dein erstes Konto!</div>';
+            return;
+        }
+
+        financeData.accounts.forEach((account, index) => {
+            const item = document.createElement('div');
+            item.className = 'list-group-item d-flex justify-content-between align-items-center';
+            item.innerHTML = `
+                <div>
+                    <strong>${account.name}</strong>
+                </div>
+                <span class="account-balance ${account.balance >= 0 ? 'positive' : 'negative'}">
+                    ${formatCurrency(account.balance)}
+                </span>
+            `;
+
+            accountsList.appendChild(item);
+        });
+
+        // Konten-Dropdown aktualisieren
+        updateAccountsDropdown();
+    }
+
+    // Transaktionen rendern
+    function renderTransactions() {
+        if (!transactionsList) return;
+
+        transactionsList.innerHTML = '';
+
+        if (financeData.transactions.length === 0) {
+            transactionsList.innerHTML = '<div class="text-center text-muted py-3">Keine Transaktionen vorhanden.</div>';
+            return;
+        }
+
+        // Sortiere nach Datum (neuste zuerst)
+        const sortedTransactions = [...financeData.transactions].sort((a, b) => {
+            return new Date(b.date || Date.now()) - new Date(a.date || Date.now());
+        });
+
+        // Zeige die 5 neusten Transaktionen
+        const recentTransactions = sortedTransactions.slice(0, 5);
+
+        recentTransactions.forEach((transaction, index) => {
+            const account = financeData.accounts.find(a => a.id === transaction.accountId)?.name || 'Unbekanntes Konto';
+            const date = transaction.date ? new Date(transaction.date).toLocaleDateString() : 'Kein Datum';
+
+            const item = document.createElement('div');
+            item.className = 'list-group-item transaction-item';
+            item.innerHTML = `
+                <div>
+                    <div class="d-flex align-items-center mb-1">
+                        <strong>${transaction.description || 'Keine Beschreibung'}</strong>
+                        <span class="transaction-category ms-2">${transaction.category || 'Sonstiges'}</span>
+                    </div>
+                    <small class="text-muted">${date} • ${account}</small>
+                </div>
+                <span class="${transaction.amount >= 0 ? 'positive' : 'negative'}">
+                    ${formatCurrency(transaction.amount)}
+                </span>
+            `;
+
+            transactionsList.appendChild(item);
+        });
+    }
+
+    // Ziele rendern
+    function renderGoals() {
+        if (!goalsList) return;
+
+        goalsList.innerHTML = '';
+
+        if (financeData.goals.length === 0) {
+            goalsList.innerHTML = '<div class="text-center text-muted py-3">Keine Ziele vorhanden. Setze dir ein finanzielles Ziel!</div>';
+            return;
+        }
+
+        financeData.goals.forEach((goal, index) => {
+            const progress = (goal.currentAmount / goal.targetAmount) * 100;
+            const targetDate = goal.targetDate ? new Date(goal.targetDate).toLocaleDateString() : 'Kein Zieldatum';
+
+            const item = document.createElement('div');
+            item.className = 'list-group-item';
+            item.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <strong>${goal.title}</strong>
+                    <small>${targetDate}</small>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span>${formatCurrency(goal.currentAmount)} von ${formatCurrency(goal.targetAmount)}</span>
+                    <span>${progress.toFixed(0)}%</span>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: ${progress}%"
+                         aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            `;
+
+            goalsList.appendChild(item);
+        });
+    }
+
+    // Konto erstellen
+    function handleAccountSubmit(e) {
+        e.preventDefault();
+        const formData = new FormData(accountForm);
+
+        const account = {
+            id: Date.now().toString(),
+            name: formData.get('name'),
+            balance: parseFloat(formData.get('balance')) || 0
+        };
+
+        financeData.accounts.push(account);
+        saveData();
+        renderAccounts();
+        updateDashboardSummary();
+
+        // Modal schließen und Formular zurücksetzen
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addAccountModal'));
+        modal.hide();
+        accountForm.reset();
+    }
+
+    // Transaktion erstellen
+    function handleTransactionSubmit(e) {
+        e.preventDefault();
+        const formData = new FormData(transactionForm);
+
+        const accountId = formData.get('account');
+        const amount = parseFloat(formData.get('amount')) || 0;
+
+        const transaction = {
+            id: Date.now().toString(),
+            accountId: accountId,
+            amount: amount,
+            date: formData.get('date'),
+            category: formData.get('category'),
+            description: formData.get('description')
+        };
+
+        // Kontostand aktualisieren
+        const accountIndex = financeData.accounts.findIndex(a => a.id === accountId);
+        if (accountIndex !== -1) {
+            financeData.accounts[accountIndex].balance += amount;
+        }
+
+        financeData.transactions.push(transaction);
+        saveData();
+        renderAccounts();
+        renderTransactions();
+        updateDashboardSummary();
+        updateChart();
+
+        // Modal schließen und Formular zurücksetzen
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addTransactionModal'));
+        modal.hide();
+        transactionForm.reset();
+        document.getElementById('transactionDate').valueAsDate = new Date();
+    }
+
+    // Ziel erstellen
+    function handleGoalSubmit(e) {
+        e.preventDefault();
+        const formData = new FormData(goalForm);
+
+        const goal = {
+            id: Date.now().toString(),
+            title: formData.get('title'),
+            targetAmount: parseFloat(formData.get('targetAmount')) || 0,
+            currentAmount: parseFloat(formData.get('currentAmount')) || 0,
+            targetDate: formData.get('targetDate')
+        };
+
+        financeData.goals.push(goal);
+        saveData();
+        renderGoals();
+
+        // Modal schließen und Formular zurücksetzen
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addGoalModal'));
+        modal.hide();
+        goalForm.reset();
+    }
+
+    // Konten-Dropdown aktualisieren
+    function updateAccountsDropdown() {
+        if (!transactionAccountSelect) return;
+
+        // Aktuelle Auswahl speichern
+        const currentSelection = transactionAccountSelect.value;
+
+        // Dropdown leeren und Platzhalter hinzufügen
+        transactionAccountSelect.innerHTML = '<option value="" disabled selected>Konto auswählen</option>';
+
+        // Konten hinzufügen
+        financeData.accounts.forEach(account => {
+            const option = document.createElement('option');
+            option.value = account.id;
+            option.textContent = `${account.name} (${formatCurrency(account.balance)})`;
+            transactionAccountSelect.appendChild(option);
+        });
+
+        // Vorherige Auswahl wiederherstellen, wenn möglich
+        if (currentSelection && transactionAccountSelect.querySelector(`option[value="${currentSelection}"]`)) {
+            transactionAccountSelect.value = currentSelection;
+        }
+    }
+
+    // Dashboard-Zusammenfassung aktualisieren
+    function updateDashboardSummary() {
+        // Gesamtvermögen berechnen
+        const totalBalance = financeData.accounts.reduce((sum, account) => sum + account.balance, 0);
+        totalBalanceElement.textContent = formatCurrency(totalBalance);
+
+        // Monatliche Einnahmen und Ausgaben berechnen
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        const recentTransactions = financeData.transactions.filter(t =>
+            new Date(t.date || Date.now()) >= thirtyDaysAgo
+        );
+
+        const monthlyIncome = recentTransactions
+            .filter(t => t.amount > 0)
+            .reduce((sum, t) => sum + t.amount, 0);
+
+        const monthlyExpenses = recentTransactions
+            .filter(t => t.amount < 0)
+            .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+
+        monthlyIncomeElement.textContent = formatCurrency(monthlyIncome);
+        monthlyExpensesElement.textContent = formatCurrency(monthlyExpenses);
+    }
+
+    // Währungsformat
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('de-DE', {
+            style: 'currency',
+            currency: 'EUR'
+        }).format(amount);
+    }
+
+    // Chart.js Diagramm
+    let financeChart;
+
+function initChart() {
+    const ctx = document.getElementById('financeChart');
+    if (!ctx) return;
+
+    const chartData = prepareChartData();
+
+    financeChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartData.labels,
+            datasets: [
+                {
+                    label: 'Einnahmen',
+                    data: chartData.income,
+                    backgroundColor: 'rgba(46, 204, 113, 0.7)',
+                    borderColor: 'rgba(46, 204, 113, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Ausgaben',
+                    data: chartData.expenses,
+                    backgroundColor: 'rgba(231, 76, 60, 0.7)',
+                    borderColor: 'rgba(231, 76, 60, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: document.body.classList.contains('dark-mode') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: document.body.classList.contains('dark-mode') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: document.body.classList.contains('dark-mode') ? '#ffffff' : '#2c3e50'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Chart-Daten vorbereiten
+function prepareChartData() {
+    // Letzte 6 Monate ermitteln
+    const months = [];
+    const income = [];
+    const expenses = [];
+
+    for (let i = 5; i >= 0; i--) {
+        const date = new Date();
+        date.setMonth(date.getMonth() - i);
+
+        const monthYear = date.toLocaleDateString('de-DE', { month: 'short', year: 'numeric' });
+        months.push(monthYear);
+
+        // Monatsanfang und -ende
+        const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+        const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+        // Transaktionen für diesen Monat filtern
+        const monthTransactions = financeData.transactions.filter(t => {
+            const transDate = new Date(t.date || Date.now());
+            return transDate >= monthStart && transDate <= monthEnd;
+        });
+
+        // Einnahmen und Ausgaben berechnen
+        const monthIncome = monthTransactions
+            .filter(t => t.amount > 0)
+            .reduce((sum, t) => sum + t.amount, 0);
+
+        const monthExpenses = monthTransactions
+            .filter(t => t.amount < 0)
+            .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+
+        income.push(monthIncome);
+        expenses.push(monthExpenses);
+    }
+
+    return { labels: months, income, expenses };
+}
+
+// Chart aktualisieren
+function updateChart() {
+    if (!financeChart) return;
+
+    const chartData = prepareChartData();
+
+    financeChart.data.labels = chartData.labels;
+    financeChart.data.datasets[0].data = chartData.income;
+    financeChart.data.datasets[1].data = chartData.expenses;
+
+    financeChart.options.scales.y.grid.color = document.body.classList.contains('dark-mode') ?
+        'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+    financeChart.options.scales.x.grid.color = document.body.classList.contains('dark-mode') ?
+        'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+    financeChart.options.plugins.legend.labels.color = document.body.classList.contains('dark-mode') ?
+        '#ffffff' : '#2c3e50';
+
+    financeChart.update();
+}
+
+// Event Listener für dark mode change, um Chart-Farben zu aktualisieren
+darkModeToggle.addEventListener('click', () => {
+    if (financeChart) {
+        setTimeout(updateChart, 100); // Kurze Verzögerung um sicherzustellen, dass die dark-mode-Klasse aktualisiert wurde
+    }
+});
+
+// Progressive Web App
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+            .then(registration => {
+                console.log('ServiceWorker registriert mit Scope:', registration.scope);
+            })
+            .catch(error => {
+                console.log('ServiceWorker Registrierung fehlgeschlagen:', error);
+            });
+    });
+}
+
+// Import/Export Funktionalität
+function exportData() {
+    const dataStr = JSON.stringify(financeData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `finanzmanager_export_${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function importData(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const importedData = JSON.parse(e.target.result);
+
+            // Validierung der Datenstruktur
+            if (importedData &&
+                Array.isArray(importedData.accounts) &&
+                Array.isArray(importedData.transactions) &&
+                Array.isArray(importedData.goals)) {
+
+                financeData = importedData;
+                saveData();
+
+                renderAccounts();
+                renderTransactions();
+                renderGoals();
+                updateDashboardSummary();
+                updateChart();
+
+                alert('Daten erfolgreich importiert!');
+            } else {
+                alert('Die Datei enthält kein gültiges Finanzmanager-Format.');
+            }
+        } catch (error) {
+            alert('Fehler beim Importieren der Daten: ' + error.message);
+        }
+    };
+    reader.readAsText(file);
+}
+
+// Konto löschen
+function deleteAccount(accountId) {
+    if (!confirm('Möchtest du dieses Konto wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
+        return;
+    }
+
+    // Konto aus der Liste entfernen
+    financeData.accounts = financeData.accounts.filter(account => account.id !== accountId);
+
+    // Alle zugehörigen Transaktionen entfernen
+    financeData.transactions = financeData.transactions.filter(transaction => transaction.accountId !== accountId);
+
+    saveData();
+    renderAccounts();
+    renderTransactions();
+    updateDashboardSummary();
+    updateChart();
+}
+
+// Transaktion löschen
+function deleteTransaction(transactionId) {
+    const transaction = financeData.transactions.find(t => t.id === transactionId);
+    if (!transaction) return;
+
+    if (!confirm('Möchtest du diese Transaktion wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
+        return;
+    }
+
+    // Kontostand aktualisieren
+    const accountIndex = financeData.accounts.findIndex(a => a.id === transaction.accountId);
+    if (accountIndex !== -1) {
+        financeData.accounts[accountIndex].balance -= transaction.amount;
+    }
+
+    // Transaktion aus der Liste entfernen
+    financeData.transactions = financeData.transactions.filter(t => t.id !== transactionId);
+
+    saveData();
+    renderAccounts();
+    renderTransactions();
+    updateDashboardSummary();
+    updateChart();
+}
+
+// Ziel löschen
+function deleteGoal(goalId) {
+    if (!confirm('Möchtest du dieses Ziel wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
+        return;
+    }
+
+    // Ziel aus der Liste entfernen
+    financeData.goals = financeData.goals.filter(goal => goal.id !== goalId);
+
+    saveData();
+    renderGoals();
+}
+
+// Kategorie-Farben
+const categoryColors = {
+    'Gehalt': '#2ecc71',
+    'Miete': '#e74c3c',
+    'Lebensmittel': '#f39c12',
+    'Transport': '#3498db',
+    'Unterhaltung': '#9b59b6',
+    'Gesundheit': '#1abc9c',
+    'Bildung': '#34495e',
+    'Einkaufen': '#e67e22',
+    'Reisen': '#16a085',
+    'Sonstiges': '#95a5a6'
+};
+
+// Anwendung initialisieren
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

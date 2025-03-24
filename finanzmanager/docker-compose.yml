@@ -1,0 +1,30 @@
+
+services:
+  mongo:
+    image: arm64v8/mongo:6.0
+    container_name: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: robin
+      MONGO_INITDB_ROOT_PASSWORD: deinSicheresPasswort
+    volumes:
+      - mongo_data:/data/db
+
+  node-app:
+    image: node:18
+    container_name: finanzmanager-app
+    working_dir: /app
+    volumes:
+      - ./app:/app
+    command: bash -c "npm install && npm start"
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongo
+    environment:
+      MONGO_URL: mongodb://robin:deinSicheresPasswort@mongo:27017
+
+volumes:
+  mongo_data:
